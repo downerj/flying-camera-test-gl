@@ -67,6 +67,15 @@ int main(int, char**) {
   glfwSwapInterval(1);
   glfwSetKeyCallback(window, keyCallback);
   while (!glfwWindowShouldClose(window)) {
+    int width;
+    int height;
+    glfwGetFramebufferSize(window, &width, &height);
+    glViewport(0, 0, width, height);
+    glEnable(GL_DEPTH);
+    glDepthFunc(GL_LEQUAL);
+    glClearColor(0., .5, 1., 1.);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
