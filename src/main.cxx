@@ -1,5 +1,8 @@
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 
 #define GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
@@ -39,10 +42,10 @@ void keyCallback(GLFWwindow *window, int key, int /*scancode*/, int action, int 
   }
 }
 
-int main(int, char**) {
+GLFWwindow* initializeGraphics() {
   if (!glfwInit()) {
     DEBUG_ERROR_LINE("GLFW error: Initialization failed");
-    std::exit(EXIT_FAILURE);
+    return nullptr;
   }
 #ifdef DEBUG
   glfwSetErrorCallback(errorCallbackGLFW);
@@ -72,7 +75,7 @@ int main(int, char**) {
   )};
   if (!window) {
     glfwTerminate();
-    std::exit(EXIT_FAILURE);
+    return nullptr;
   }
   glfwMakeContextCurrent(window);
   gladLoadGL(glfwGetProcAddress);
@@ -80,6 +83,10 @@ int main(int, char**) {
   DEBUG_LOG_LINE("OpenGL version: " << glGetString(GL_VERSION));
   glfwSwapInterval(1);
   glfwSetKeyCallback(window, keyCallback);
+  return window;
+}
+
+void mainLoop(GLFWwindow* window) {
   while (!glfwWindowShouldClose(window)) {
     int width;
     int height;
@@ -92,6 +99,18 @@ int main(int, char**) {
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
+}
+
+void cleanUp(GLFWwindow* window) {
   glfwDestroyWindow(window);
   glfwTerminate();
+}
+
+int main(int, char**) {
+  GLFWwindow* window{initializeGraphics()};
+  if (window == nullptr) {
+    std::exit(EXIT_FAILURE);
+  }
+  mainLoop(window);
+  cleanUp(window);
 }
